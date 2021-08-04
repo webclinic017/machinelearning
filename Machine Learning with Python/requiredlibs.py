@@ -1,4 +1,5 @@
 # # total 43 tools
+
 # import pandas
 # import torch
 # import seaborn
@@ -7,6 +8,7 @@
 # import numpy
 # import matplotlib
 # import dask
+
 # # tools
 # import redis
 # import pymongo
@@ -19,6 +21,7 @@
 # import darwinexapis
 # import blaze
 # import bs4
+
 # # web
 # import flask
 # import django
@@ -31,6 +34,7 @@
 # import fredapi
 # import duka
 # import datamine
+
 # # quant
 # import qstrader
 # import qlib
@@ -40,11 +44,13 @@
 # import pyalgotrade
 # import backtesting
 # import batdata
+
 # # analytic
 # import pandas_ta
 # import candlestick
 # import pymc3
 # import statsmodels
 # import mplfinance
+
 # # message
 # import zmq
