@@ -1,13 +1,12 @@
 import pandas as pd
-# import quandl
 import investpy as iv
 import numpy as np
 import math
 from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-import datetime
 from datetime import date
+import datetime
 import matplotlib.pyplot as plt
 from matplotlib import style
 
@@ -143,23 +142,25 @@ if __name__ == "__main__":
             next_date = datetime.datetime.fromtimestamp(next_unix)
             next_unix += 86400
             df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
-        df.to_csv(f'data/predict/{quotes}_{interval}_forecast.csv')
-        df['Close'].plot()
-        df['Forecast'].plot()
-        plt.legend(loc=4)
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title(f'Forecast {quotes} {interval} prices')
-        print(quotes, last_date, round(confidence*100, 2), round(
-            df['Forecast'].min(), 2), round(df['Forecast'].max(), 2))
-        plt.show()
+        print(df.tail(10))
+        # df.to_csv(f'data/predict/{quotes}_{interval}_forecast.csv')
+        # df['Close'].plot()
+        # df['Forecast'].plot()
+        # plt.legend(loc=4)
+        # plt.xlabel('Date')
+        # plt.ylabel('Price')
+        # plt.title(f'Forecast {quotes} {interval} prices')
+        # print(quotes, last_date, round(confidence*100, 2), round(
+        #     df['Forecast'].min(), 2), round(df['Forecast'].max(), 2))
+        # plt.show()
 
     def get_faang():
         ''' # FAANG stocks example
         '''
-        items = ['FB', 'AMZN', 'MSFT', 'NFLX', 'GOOGL']
+        # items = ['FB', 'AMZN', 'MSFT', 'NFLX', 'GOOGL']
+        items = ['FB']
         for item in items:
-            get_data(quotes=item, interval='Daily')
+            get_data(quotes=item, interval='Daily', samplesize=0.001)
         ''' # only 1 stock
         '''
         # get_data(quotes='GOOGL')

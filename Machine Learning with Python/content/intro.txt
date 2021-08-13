@@ -1,0 +1,22 @@
+Install numpy, matplotlib, pandas, sklearn and their dependencies
+
+supervised, unsupervised, and deep learning algorithms
+
+covering linear regression, K Nearest Neighbors, Support Vector Machines (SVM), flat clustering, hierarchical clustering, and neural networks
+
+algorithm logically - application
+
+linear algebra
+
+statistics
+
+regression: find the equation that best fits (best fit line) with data / stock prices
+- teaches the machine by showing it features and then showing it what the correct answer
+- "test" the machine on some unseen data, where the scientist still knows what the correct answer is, but the machine doesn't
+- compared to the known answers with machine answers
+- meaningful data: historical prices/ patterns indicative of future prices???
+- relationship between price changes and volume over time
+- more data better prediction
+- transform raw data: daily volatility, daily percent change
+
+draw a best-fit line by estimation
