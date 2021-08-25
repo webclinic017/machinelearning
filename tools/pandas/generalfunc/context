@@ -1,0 +1,6 @@
+melt:
+    identifier variables
+    measured variables
+    unpivoted
+     ‘variable’ and ‘value’.
+    DataFrame format

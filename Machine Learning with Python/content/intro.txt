@@ -20,3 +20,19 @@ regression: find the equation that best fits (best fit line) with data / stock p
 - transform raw data: daily volatility, daily percent change
 
 draw a best-fit line by estimation
+
+basics of vectors
+- each "coordinate" as movement in that "dimension."
+- direction, magnitude
+- Pythagorean's Theorem
+
+Support Vector "Assertions" (constraints) - math
+- objective: take known data then SVM fitment/training (optimization)
+- hyperplane, dimensions, separating line
+- mathematically method play with dimensions
+- hm unknown variables?? what is actual mathematical constraints???
+- separating hyperplane + support vectors(featuresets~(datapoints on the graph))
+- how support vectors impact separating hyperplane
+https://pythonprogramming.net/support-vector-assertions-machine-learning-tutorial/
+
+

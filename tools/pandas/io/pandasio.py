@@ -2,6 +2,8 @@ import investpy
 import datetime
 import pandas as pd
 import xlrd
+import requests as rq
+from bs4 import BeautifulSoup
 
 startdate = '01/01/2010'
 enddate = datetime.date.today().strftime('%d/%m/%Y')
@@ -25,7 +27,6 @@ if __name__ == "__main__":
     # print(df.tail())
 
     # # ------------------- Clipboard -------------------
-    # # https://stackoverflow.com/questions/54021079/could-there-be-an-easier-way-to-use-pandas-read-clipboard-to-read-a-series
 
     # # df = pd.read_clipboard(header=None, squeeze=True)
     # # df.to_csv('com_performance.csv')
@@ -63,3 +64,27 @@ if __name__ == "__main__":
     # df.to_json('gu.json')
     # df = pd.read_json('gu.json')
     # print(df)
+    # # # ------------------- HTML -------------------
+    # to_html vs read_html
+
+    def pairs_extract(soup=soup):
+        pairs = ['EURUSD', 'EURJPY', 'EURCAD', 'EURGBP', 'EURAUD', 'EURNZD',
+                 'EURCHF', 'GBPUSD', 'GBPJPY', 'GBPCAD', 'GBPAUD', 'GBPNZD',
+                 'GBPCHF', 'XAUUSD', 'NZDUSD', 'USDJPY', 'USDCHF', 'USDCAD']
+        r = rq.get('https://www.myfxbook.com/community/outlook')
+        soup = BeautifulSoup(r.content, "html.parser")
+        tmp_tbl = soup.find(id="outlookSymbolsTable")
+        df = pd.read_html(tmp_tbl.prettify(), index_col=0)[0]
+        drop_cols = ['Community Trend (Shorts vs Longs)',
+                     'Symbol Popularity', 'Unnamed: 6']
+        df.drop(drop_cols, 1, inplace=True)
+        for item in df.index.tolist():
+            if item not in pairs:
+                df.drop(item, inplace=True)
+        return df
+
+    # print(pairs_extract().tail())
+    # # # ------------------- XML -------------------
+    # to_xml vs read_xml
+    # # # ------------------- SQL -------------------
+    # ...

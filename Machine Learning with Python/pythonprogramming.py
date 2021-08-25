@@ -44,7 +44,6 @@ if __name__ == "__main__":
         df['PCT_Vol'] = df['Volume'].pct_change()
         # print(df.tail(20))
         df.to_csv(f'data/source/{quote}_{interval}.csv')
-    pass
 
     def read_data(quote, interval):
         df = pd.read_csv(f'data/source/{quote}_{interval}.csv')
@@ -61,9 +60,10 @@ if __name__ == "__main__":
         # df.fillna(value=-99999, inplace=True)
         return df
 
+    # label : forecast_col
     def reg_proc(df, forecast_col, useSVM=True, size=0.01):
-        # process
-        forecast_out = int(ceil(size * len(df)))
+        # process: sample vs population
+        forecast_out = int(ceil(size * len(df)))    # sample number
         df['label'] = df[forecast_col].shift(-forecast_out)
 
         # forecast_col = 'Close'
@@ -98,7 +98,7 @@ if __name__ == "__main__":
             clf = svm.SVR()
         else:
             clf = LinearRegression(n_jobs=-1)
-        clf.fit(X_train, y_train)
+        clf.fit(X_train, y_train)   # self : returns an instance of self.
         # test
         confidence = clf.score(X_test, y_test)
         with open(f'reg_proc_{forecast_col}.pickle', 'wb') as f:
@@ -123,9 +123,11 @@ if __name__ == "__main__":
         reg_df = read_data('Gold', 'Daily')
         reg_df.drop(['PCT_Close', 'PCT_Vol'], axis=1, inplace=True)
 
-        reg_df = clean_dataset(reg_df)
+        # handle missing data
+        reg_df = clean_dataset(reg_df)  # outliner: nan, zero, ...
         print(reg_df.tail())
-        # # main stream
+
+        # # main close
         # forecast_col = 'Close'
         # forecast_out = int(ceil(size * len(reg_df)))
         # reg_df['label'] = reg_df[forecast_col].shift(-forecast_out)
@@ -197,15 +199,19 @@ if __name__ == "__main__":
 
         plt.show()
 
-    def classifier_task(task):
+    def cancer_ds():
         df = pd.read_csv('data/breast-cancer-wisconsin.data')
-        # treated NaN as an outlier feature
         df.replace('?', -99999, inplace=True)
 
         df.columns = ['id', 'Clump Thickness', 'Cell Size', 'Cell Shape',
                       'Marginal Adhesion', 'Single Epithelial', 'Bare Nuclei',
                       'Bland Chromatin', 'Normal Nucleoli', 'Mitoses', 'class']
         df.drop(['id'], 1, inplace=True)
+        return df
+
+    def classifier_task(task):
+        df = cancer_ds()
+
         X = np.array(df.drop(['class'], 1))
         y = np.array(df['class'])
 
@@ -272,13 +278,8 @@ if __name__ == "__main__":
         return vote_result
 
     def breast_cancer_ds():
-        df = pd.read_csv('data/breast-cancer-wisconsin.data')
-        df.replace('?', -99999, inplace=True)
+        df = cancer_ds()
 
-        df.columns = ['id', 'Clump Thickness', 'Cell Size', 'Cell Shape',
-                      'Marginal Adhesion', 'Single Epithelial', 'Bare Nuclei',
-                      'Bland Chromatin', 'Normal Nucleoli', 'Mitoses', 'class']
-        df.drop(['id'], 1, inplace=True)
         full_data = df.astype(float).values.tolist()
         random.shuffle(full_data)
 
@@ -314,14 +315,171 @@ if __name__ == "__main__":
                 total += 1
         print('Accuracy:', correct/total)
 
-# regression()
-# best_func()
-# test_euclidean()
-# knn2()
-# breast_cancer_ds()
+    '''
+    start = '01/01/2010'
+    end = '23/08/2021'
+    get_data('Gold', start, end, 'Daily')
+    get_data('Gold', start, end, 'Weekly')
+    get_data('Gold', start, end, 'Monthly')
 
-# # knn() changing to task name
-# classifier_task(neighbors.KNeighborsClassifier)
+    # regression()
+    # best_func()
+    # test_euclidean()
+    # knn2()
+    # breast_cancer_ds()
 
-# svm 4.6x faster than knn
-classifier_task(svm.SVC)
+    # # knn() changing to task name
+    # classifier_task(neighbors.KNeighborsClassifier)
+
+    # # svm 4.6x faster than knn
+    # classifier_task(svm.SVC)
+    '''
+
+    # building our Support Vector Machine class
+    class SVM():
+        def __init__(self, visualization=True):
+            self.visualization = visualization
+            self.colors = {1: 'r', -1: 'b'}
+            if self.visualization:
+                self.fig = plt.figure()
+                self.ax = self.fig.add_subplot(1, 1, 1)
+
+        # train
+        def fit(self, data):
+            self.data = data  # data is a dict
+            opt_dict = {}   # optimization dict
+            transforms = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
+            all_data = []
+            for k, v in self.data.items():
+                for features in v:
+                    for feature in features:
+                        all_data.append(feature)
+            self.max_feature_val = max(all_data)
+            self.min_feature_val = min(all_data)
+            all_data = None
+            # print(self.max_feature_val, self.min_feature_val)
+
+            step_sizes = [self.max_feature_val * 0.1,
+                          self.max_feature_val * 0.01,
+                          # point of expense:
+                          self.max_feature_val * 0.001, ]
+            # extremely expensive
+            b_range_mul = 2
+            # fucking hardcode
+            b_mul = 5
+            latest_optimum = self.max_feature_val*10
+            for step in step_sizes:
+                w = np.array([latest_optimum, latest_optimum])
+                # print(w)    # [80 80]
+                # we can do this because convex
+                optimized = False
+
+                # fucking kho hieu
+                while not optimized:
+                    for b in np.arange(-1*(self.max_feature_val*b_range_mul),
+                                       self.max_feature_val*b_range_mul,
+                                       step*b_mul):
+                        for transformation in transforms:
+                            w_t = w*transformation
+                            found_opt = True
+                            for i in self.data:
+                                for xi in self.data[i]:
+                                    yi = i
+                                    if not yi*(np.dot(w_t, xi)+b) >= 1:
+                                        found_opt = False
+                            if found_opt:
+                                opt_dict[np.linalg.norm(w_t)] = [w_t, b]
+                    if w[0] < 0:
+                        optimized = True
+                        print('Optimized a step.')
+                    else:
+                        w = w - step
+                norms = sorted([n for n in opt_dict])
+                # { ||w||: [w,b] }
+                opt_choice = opt_dict[norms[0]]
+                self.w = opt_choice[0]
+                self.b = opt_choice[1]
+                latest_optimum = opt_choice[0][0]+step*2
+            '''
+            '''
+
+        # predict
+        def predict(self, features):
+            # sign( x.w+b )
+            classification = np.sign(np.dot(np.array(features), self.w)+self.b)
+            # if it isn't zero
+            if classification != 0 and self.visualization:
+                self.ax.scatter(
+                    features[0], features[1], s=200, marker='*',
+                    c=self.colors[classification])
+            else:
+                print('featureset', features, 'is on the decision boundary')
+            return classification
+
+        def visualize(self):
+            # scattering known featuresets.
+            [[self.ax.scatter(x[0], x[1], s=100, color=self.colors[i])
+              for x in self.data[i]] for i in self.data]
+            # hyperplane = x.w+b
+            # v = x.w+b
+            # psv = 1
+            # nsv = -1
+            # dec = 0
+
+            def hyperplane(x, w, b, v):
+                # v = (w.x+b)
+                return (-w[0]*x-b+v) / w[1]
+
+            datarange = (self.min_feature_val*0.9, self.max_feature_val*1.1)
+            hyp_x_min = datarange[0]
+            hyp_x_max = datarange[1]
+
+            # (w.x+b) = 1
+            # positive support vector hyperplane
+            psv1 = hyperplane(hyp_x_min, self.w, self.b, 1)
+            psv2 = hyperplane(hyp_x_max, self.w, self.b, 1)
+            self.ax.plot([hyp_x_min, hyp_x_max], [psv1, psv2], 'k')
+
+            # (w.x+b) = -1
+            # negative support vector hyperplane
+            nsv1 = hyperplane(hyp_x_min, self.w, self.b, -1)
+            nsv2 = hyperplane(hyp_x_max, self.w, self.b, -1)
+            self.ax.plot([hyp_x_min, hyp_x_max], [nsv1, nsv2], 'k')
+
+            # (w.x+b) = 0
+            # positive support vector hyperplane
+            db1 = hyperplane(hyp_x_min, self.w, self.b, 0)
+            db2 = hyperplane(hyp_x_max, self.w, self.b, 0)
+            self.ax.plot([hyp_x_min, hyp_x_max], [db1, db2], 'y--')
+
+            plt.show()
+
+    def svm_scratch():
+        # create object
+        svm = SVM()
+        # sample data
+        data_dict = {-1: np.array([[1, 7],
+                                   [2, 8],
+                                   [3, 8]]),
+
+                     1: np.array([[5, 1],
+                                  [6, -1],
+                                  [7, 3]])}
+        # train
+        svm.fit(data=data_dict)
+
+        # # new income data
+        # predict_us = [[0, 10],
+        #               [1, 3],
+        #               [3, 4],
+        #               [3, 5],
+        #               [5, 5],
+        #               [5, 6],
+        #               [6, -5],
+        #               [5, 8]]
+        # # predict all of them
+        # for p in predict_us:
+        #     svm.predict(p)
+        # svm.visualize()
+
+    svm_scratch()
