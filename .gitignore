@@ -1,3 +1,7 @@
 Machine Learning with Python/data/*
 Machine Learning with Python/data/Predict/*
 Scikit-learn Crash Course/data/*
+Machine Learning with Python/__pycache__/*
+*.pickle
+*.csv
+*.txt
