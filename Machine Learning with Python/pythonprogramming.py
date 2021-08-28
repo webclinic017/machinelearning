@@ -359,15 +359,23 @@ if __name__ == "__main__":
             all_data = None
             # print(self.max_feature_val, self.min_feature_val)
 
-            step_sizes = [self.max_feature_val * 0.1,
-                          self.max_feature_val * 0.01,
-                          # point of expense:
-                          self.max_feature_val * 0.001, ]
+            step_sizes = [self.max_feature_val * 1]
+            # step_sizes = [self.max_feature_val * 0.1,
+            #               self.max_feature_val * 0.01,
+            #               # point of expense:
+            #               self.max_feature_val * 0.001]
+
             # extremely expensive
-            b_range_mul = 2
-            # fucking hardcode
-            b_mul = 5
+            b_range_mul = 1
+            b_mul = 3
             latest_optimum = self.max_feature_val*10
+
+            # # fixed range, but minimize step
+            # for step in step_sizes:
+            #     print(-1*(self.max_feature_val*b_range_mul),
+            #           self.max_feature_val*b_range_mul,
+            #           step*b_mul)
+
             for step in step_sizes:
                 w = np.array([latest_optimum, latest_optimum])
                 # print(w)    # [80 80]
@@ -381,25 +389,34 @@ if __name__ == "__main__":
                                        step*b_mul):
                         for transformation in transforms:
                             w_t = w*transformation
+                            # # current is [80, 80] then transform to
+                            # # another axis [-80  80] [-80 -80] [ 80 -80]
+                            # print(w_t)
+
                             found_opt = True
-                            for i in self.data:
-                                for xi in self.data[i]:
-                                    yi = i
-                                    if not yi*(np.dot(w_t, xi)+b) >= 1:
+                            for k, v in self.data.items():
+                                for xi in v:
+                                    if not k*(np.dot(w_t, xi)+b) >= 1:
                                         found_opt = False
                             if found_opt:
+                                # np.linalg.norm([80, -80]) vs
+                                # array([ 80, -80]), -8 ~ plane vs bias
                                 opt_dict[np.linalg.norm(w_t)] = [w_t, b]
                     if w[0] < 0:
                         optimized = True
                         print('Optimized a step.')
                     else:
                         w = w - step
+                # print(opt_dict)
+
+                # # sort ascending norms keys
+                # print(norms)
                 norms = sorted([n for n in opt_dict])
                 # { ||w||: [w,b] }
-                opt_choice = opt_dict[norms[0]]
-                self.w = opt_choice[0]
-                self.b = opt_choice[1]
-                latest_optimum = opt_choice[0][0]+step*2
+                opt_choice = opt_dict[norms[0]]  # get the smallest
+                self.w = opt_choice[0]  # smallest point plane
+                self.b = opt_choice[1]  # smallest point bias
+                latest_optimum = opt_choice[0][0]+step*2  # hardcode
             '''
             '''
 
@@ -482,4 +499,4 @@ if __name__ == "__main__":
         #     svm.predict(p)
         # svm.visualize()
 
-    svm_scratch()
+    # svm_scratch()

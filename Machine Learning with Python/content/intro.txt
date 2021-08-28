@@ -2,7 +2,8 @@ Install numpy, matplotlib, pandas, sklearn and their dependencies
 
 supervised, unsupervised, and deep learning algorithms
 
-covering linear regression, K Nearest Neighbors, Support Vector Machines (SVM), flat clustering, hierarchical clustering, and neural networks
+covering linear regression, K Nearest Neighbors, Support Vector Machines (SVM),
+flat clustering, hierarchical clustering, and neural networks
 
 algorithm logically - application
 
