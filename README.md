@@ -7,8 +7,6 @@
 
 - Neural Networks References [https://pythonprogramming.net/introduction-deep-learning-neural-network-pytorch/](https://pythonprogramming.net/introduction-deep-learning-neural-network-pytorch/)
 
-- 💬 Ask me about **Algorithms | probability | time series analysis**
-
 - Practical Machine Learning References **https://pythonprogramming.net/machine-learning-tutorial-python-introduction/**
 
 <h3 align="left">Connect with me:</h3>
