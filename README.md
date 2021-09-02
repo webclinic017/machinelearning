@@ -1,5 +1,5 @@
-<h1 align="center">Quantitative analysis</h1>
-<h3 align="center">This project is my quantitative trading learning path</h3>
+<h1 align="center">Machine learning</h1>
+<h3 align="center">Machine learning & deep learning from beginner to intermediate</h3>
 
 - 🔭 I’m currently working on [Machine Learning with Python](https://github.com/spideynolove/machinelearning/tree/main/Machine%20Learning%20with%20Python)
 
