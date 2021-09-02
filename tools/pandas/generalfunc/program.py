@@ -526,11 +526,14 @@ def merge_asof(option=1):
         )
         print(df2)
 
+
 # ---------------- pandas.concat -----------------------
 # Concatenate pandas objects
-'''
-
-'''
+def concat(option=1):
+    if option == 1:
+        df = preparing_data(25)
+        print(df.head(10))
+    pass
 # ---------------- pandas.get_dummies -----------------------
 # ---------------- pandas.factorize -----------------------
 # ---------------- pandas.unique -----------------------
@@ -567,16 +570,17 @@ def merge_asof(option=1):
 
 
 def main():
-    a = int(sys.argv[1])
-    # melt(a)
-    # pivot(a)
-    # pivot_table(a)
-    # crosstab(a)
-    # cut(a)
-    # qcut(a)
-    # merge(a)
-    # merge_ordered(a)
-    merge_asof(a)
+    num = int(sys.argv[1])
+    # melt(num)
+    # pivot(num)
+    # pivot_table(num)
+    # crosstab(num)
+    # cut(num)
+    # qcut(num)
+    # merge(num)
+    # merge_ordered(num)
+    # merge_asof(num)
+    concat(num)
     pass
 
 
