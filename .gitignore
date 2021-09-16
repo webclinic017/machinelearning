@@ -4,4 +4,5 @@ Scikit-learn Crash Course/data/*
 Machine Learning with Python/__pycache__/*
 *.pickle
 *.csv
+*.xls
 *.txt
