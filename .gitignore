@@ -6,3 +6,7 @@ Machine Learning with Python/__pycache__/*
 *.csv
 *.xls
 *.txt
+*.zip
+*.data
+*.names
+*.test
