@@ -16,6 +16,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.utils import shuffle
 from sklearn.svm import LinearSVC, SVR
+from utilities import visualize_classifier, handling_simple_data
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -103,42 +105,6 @@ def label_encoding(option=1):
         pass
 
 
-def visualize_classifier(classifier, X, y):
-    # Define the minimum and maximum values for X and Y
-    # that will be used in the mesh grid
-    min_x, max_x = X[:, 0].min() - 1.0, X[:, 0].max() + 1.0
-    min_y, max_y = X[:, 1].min() - 1.0, X[:, 1].max() + 1.0
-
-    # Define the step size to use in plotting the mesh grid
-    mesh_step_size = 0.01
-
-    # Define the mesh grid of X and Y values: tf is meshgrid
-    x_vals, y_vals = np.meshgrid(np.arange(min_x, max_x, mesh_step_size),
-                                 np.arange(min_y, max_y, mesh_step_size))
-
-    # Run the classifier on the mesh grid: wtf is c_
-    output = classifier.predict(np.c_[x_vals.ravel(), y_vals.ravel()])
-
-    # Reshape the output array
-    output = output.reshape(x_vals.shape)
-
-    # Create a plot
-    plt.figure()
-    plt.pcolormesh(x_vals, y_vals, output, cmap=plt.cm.gray)
-    # Overlay the training points on the plot
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=75, edgecolors='black',
-                linewidth=1, cmap=plt.cm.Paired)
-    # Specify the boundaries of the plot
-    plt.xlim(x_vals.min(), x_vals.max())
-    plt.ylim(y_vals.min(), y_vals.max())
-    # Specify the ticks on the X and Y axes
-    plt.xticks(
-        (np.arange(int(X[:, 0].min() - 1), int(X[:, 0].max() + 1), 1.0)))
-    plt.yticks(
-        (np.arange(int(X[:, 1].min() - 1), int(X[:, 1].max() + 1), 1.0)))
-    plt.show()
-
-
 def logistic_regression_classifier(option=1):
     # Define sample input data with two-dimensional
     # vectors and corresponding labels
@@ -156,6 +122,8 @@ def logistic_regression_classifier(option=1):
 
         # Visualize the performance of the classifier
         visualize_classifier(classifier, X, y)
+        plt.show()
+
     else:
         ''' option_purpose '''
         print("Ejemplo: digo hola mundo")
@@ -203,6 +171,7 @@ def naive_bayes_classifier(option=1):
         f1_values = cross_val_score(
             classifier, X, y, scoring='f1_weighted', cv=num_folds)
         print(f"F1: {round(100*f1_values.mean(), 2)}%")
+        plt.show()
 
     elif option == 2:
         ''' new Naïve Bayes classifier '''
@@ -219,6 +188,8 @@ def naive_bayes_classifier(option=1):
 
         # Visualize the performance of the classifier
         visualize_classifier(classifier_new, X_test, y_test)
+        plt.show()
+
     else:
         ''' option_purpose '''
         print("Ejemplo: digo hola mundo")
@@ -277,6 +248,7 @@ def score_pred(classifier, X, y, label_encoder):
         if item.isdigit():
             input_data_encoded[i] = int(input_data[i])
         else:
+            # input_data = np.reshape(input_data, (-1, 1))
             input_data_encoded[i] = int(
                 label_encoder[count].transform(input_data[i]))
             count += 1
@@ -352,24 +324,13 @@ def take_svm(option=1):
         pass
 
 
-def linear_regressor(option=1, filename="data_singlevar_regr"):
-    # Input file containing data
-    input_file = f'data\\{filename}.txt'
-
-    # Read data
-    data = np.loadtxt(input_file, delimiter=',')
-    X, y = data[:, :-1], data[:, -1]
-    # print(X, y)
-
-    # Train and test split
-    num_training = int(0.8 * len(X))    # index
-    num_test = len(X) - num_training
-
-    X_train, y_train = X[:num_training], y[:num_training]
-    X_test, y_test = X[num_training:], y[num_training:]
-
+def linear_regressior(option=1):
     if option == 1:
         ''' single variable '''
+        # Input file containing data
+        input_file = 'data\\data_singlevar_regr.txt'
+
+        X_train, X_test, y_train, y_test = handling_simple_data(input_file)
         # '''
         #  : NOT NEED IF READ PICKLE SAVED DATA
         # Create linear regressor object
@@ -412,6 +373,11 @@ def linear_regressor(option=1, filename="data_singlevar_regr"):
 
     elif option == 2:
         ''' multivariable '''
+        # Input file containing data
+        input_file = 'data\\data_multivar_regr.txt'
+
+        X_train, X_test, y_train, y_test = handling_simple_data(input_file)
+
         # Create the linear regressor model
         linear_regressor = linear_model.LinearRegression()
         # Train the model using the training sets
@@ -485,13 +451,20 @@ def take_svr(option=1):
 
 def main():
     # preprocessing_data(int(sys.argv[1]))
+
     # label_encoding(int(sys.argv[1]))
+
     # logistic_regression_classifier(int(sys.argv[1]))
+
     # naive_bayes_classifier(int(sys.argv[1]))
+
     # confusion_matrix_creation(int(sys.argv[1]))
-    # take_svm(int(sys.argv[1]))
-    # linear_regressor(int(sys.argv[1]), filename="data_multivar_regr")
-    take_svr(int(sys.argv[1]))
+
+    take_svm(int(sys.argv[1]))
+
+    # linear_regressior(int(sys.argv[1]))
+
+    # take_svr(int(sys.argv[1]))
 
 
 if __name__ == "__main__":
