@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# import tensorflow
 
 
 def visualize_classifier(classifier, X, y, title="Visualize_classifier"):
